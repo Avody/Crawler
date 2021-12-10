@@ -2,8 +2,6 @@ import scrapy
 import json
 from scrapy.crawler import CrawlerProcess
 import mysql.connector
-import schedule
-import time 
 
 class EuronewsCrawler(scrapy.Spider):
     
@@ -67,6 +65,8 @@ for j in data:
     
         title = j['title']
         article = text
+        if article=="":
+            continue
         value=(title,article,title)
         mycursor.execute(sql,value)
         mydb.commit()

@@ -2,8 +2,6 @@ import scrapy
 import json
 from scrapy.crawler import CrawlerProcess
 import mysql.connector
-import schedule
-import time 
 
 ##### Scrape site #####
 class BbcCrawler(scrapy.Spider):
@@ -66,7 +64,7 @@ mydb = mysql.connector.connect(
 )
 mycursor = mydb.cursor()
 
-sql="INSERT INTO articles(Title, Article) SELECT %s, %s FROM DUAL WHERE NOT EXISTS(SELECT 1 FROM articles WHERE Title = %s) LIMIT 1;"
+sql="INSERT INTO articles(Title, Article) SELECT %s, %s FROM DUAL WHERE NOT EXISTS(SELECT 1 FROM articles WHERE Title = %s ) LIMIT 1 ;"
 
 
 
@@ -79,9 +77,11 @@ for j in data:
         text = ''
         for i in j['article']:
             text = text + i
-    
+        
         title = j['title']
         article = text
+        if article=="":
+            continue
         value=(title,article,title)
         mycursor.execute(sql,value)
         mydb.commit()
